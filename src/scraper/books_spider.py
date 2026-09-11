@@ -23,6 +23,16 @@ class BooksSpider(Spider):
                 callback=self.parse_product
             )
 
+        next_page = response.css(
+            "li.next a::attr(href)"
+        ).get()
+        
+        if next_page:
+            yield response.follow(
+                next_page,
+                callback=self.parse
+            )
+
     async def parse_product(self, response: Response):
         title = response.css("h1::text").get()
 
@@ -30,9 +40,9 @@ class BooksSpider(Spider):
             ".price_color::text"
         ).get()
 
-        description = response.css(
-            "#product_description + p::text"
-        ).get()
+        # description = response.css(
+        #     "#product_description + p::text"
+        # ).get()
 
         price = float(
             price_text.replace("£", "")
@@ -46,7 +56,7 @@ class BooksSpider(Spider):
             "name": title,
             "price": price,
             "currency": "GBP",
-            "description": description,
+            # "description": description,
             "product_url": response.url,
             "source": "books.toscrape.com"
         }
