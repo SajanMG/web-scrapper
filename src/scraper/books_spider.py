@@ -1,5 +1,5 @@
 from scrapling.spiders import Spider, Response
-
+from models import Product
 
 class BooksSpider(Spider):
     name = "books"
@@ -52,14 +52,15 @@ class BooksSpider(Spider):
         # print("Price:", price)
         # print("Description:", description)
 
-        yield {
-            "name": title,
-            "price": price,
-            "currency": "GBP",
-            # "description": description,
-            "product_url": response.url,
-            "source": "books.toscrape.com"
-        }
+        product = Product(
+            name=title,
+            price=price,
+            currency="GBP",
+            product_url=response.url,
+            source="books.toscrape.com"
+        )
+
+        yield product.to_dict()
 
 
 result = BooksSpider().start()
