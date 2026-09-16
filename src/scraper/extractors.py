@@ -19,3 +19,21 @@ def extract_book(response) -> Product:
         product_url=response.url,
         source="books.toscrape.com"
     )
+
+
+def extract_scrapingcourse_product(product) -> Product:
+    name = product.css(".product-name::text").get()
+    price_text = product.css(".product-price::text").get()
+
+    price = float(
+        price_text.replace("$", "")
+    )
+    product_url = product.css("a::attr(href)").get()
+
+    return Product(
+        name=name,
+        price=price,
+        currency="USD",
+        product_url=product_url,
+        source="scrapingcourse.com"
+    )
