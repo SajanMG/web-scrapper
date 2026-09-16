@@ -1,17 +1,21 @@
+import logging
+
 from scrapling.spiders import Spider, Response
-from models import Product
+from extractors import extract_book
 
 class BooksSpider(Spider):
     name = "books"
+
+    logging_level = logging.WARNING
 
     start_urls = [
         "https://books.toscrape.com/"
     ]
 
     async def parse(self, response: Response):
+        print("Processing:", response.url)
         books = response.css("article.product_pod")
 
-        print("Books found:", len(books))
 
         for book in books:
             product_path = book.css(
@@ -34,35 +38,12 @@ class BooksSpider(Spider):
             )
 
     async def parse_product(self, response: Response):
-        title = response.css("h1::text").get()
-
-        price_text = response.css(
-            ".price_color::text"
-        ).get()
-
-        # description = response.css(
-        #     "#product_description + p::text"
-        # ).get()
-
-        price = float(
-            price_text.replace("£", "")
-        )
-
-        # print("Title:", title)
-        # print("Price:", price)
-        # print("Description:", description)
-
-        product = Product(
-            name=title,
-            price=price,
-            currency="GBP",
-            product_url=response.url,
-            source="books.toscrape.com"
-        )
+        product = extract_book(response)
 
         yield product.to_dict()
 
 
 result = BooksSpider().start()
 
-print(result.items)
+print("Items scraped:", len(result.items))
+print("First item:", result.items[0])
