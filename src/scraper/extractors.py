@@ -14,7 +14,7 @@ def extract_book(response) -> Product:
 
     return Product(
         name=title,
-        price=price,
+        current_price=price,
         currency="GBP",
         product_url=response.url,
         source="books.toscrape.com"
@@ -32,7 +32,7 @@ def extract_scrapingcourse_product(product) -> Product:
 
     return Product(
         name=name,
-        price=price,
+        current_price=price,
         currency="USD",
         product_url=product_url,
         source="scrapingcourse.com"
