@@ -3,7 +3,7 @@ from dataclasses import dataclass, asdict
 @dataclass
 class Product:
     name: str
-    current_price: float
+    current_price: float | None
     currency: str
     product_url: str
     source: str
