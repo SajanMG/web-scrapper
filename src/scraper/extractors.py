@@ -37,3 +37,39 @@ def extract_scrapingcourse_product(product) -> Product:
         product_url=product_url,
         source="scrapingcourse.com"
     )
+
+def extract_woolworths_product(raw_product) -> Product:
+    current_price = float(
+        raw_product["current_price"].replace("$", "")
+    )
+
+    regular_price = None
+
+    if raw_product["regular_price"]:
+        regular_price = float(
+            raw_product["regular_price"].replace("$", "")
+        )
+
+    unit_price = None
+    unit = None
+
+    if raw_product["unit_price"]:
+        parts = raw_product["unit_price"].split("/")
+
+        unit_price = float(
+            parts[0].replace("$", "").strip()
+        )
+
+        unit = parts[1].strip()
+
+    return Product(
+        name=raw_product["name"],
+        current_price=current_price,
+        currency="AUD",
+        product_url=raw_product["product_url"],
+        source="woolworths.com.au",
+        regular_price=regular_price,
+        unit_price=unit_price,
+        unit=unit,
+        on_special=regular_price is not None
+    )
