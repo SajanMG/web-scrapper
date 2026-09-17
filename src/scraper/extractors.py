@@ -39,9 +39,12 @@ def extract_scrapingcourse_product(product) -> Product:
     )
 
 def extract_woolworths_product(raw_product) -> Product:
-    current_price = float(
-        raw_product["current_price"].replace("$", "")
-    )
+    current_price = None
+
+    if raw_product["current_price"]:
+        current_price = float(
+            raw_product["current_price"].replace("$", "")
+        )
 
     regular_price = None
 
@@ -71,5 +74,6 @@ def extract_woolworths_product(raw_product) -> Product:
         regular_price=regular_price,
         unit_price=unit_price,
         unit=unit,
-        on_special=regular_price is not None
+        on_special=regular_price is not None,
+        available=raw_product["available"]
     )
