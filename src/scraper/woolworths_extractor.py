@@ -4,7 +4,7 @@ from playwright.sync_api import Page
 def extract_woolworths_raw_products(page: Page):
     return page.evaluate("""
         () => {
-            const tiles = document.querySelectorAll("wc-product-tile");
+            const tiles = document.querySelectorAll("#search-results-product wc-product-tile");
 
             const results = Array.from(tiles).map(tile => {
                 if (!tile.shadowRoot) {
