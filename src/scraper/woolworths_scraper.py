@@ -7,8 +7,10 @@ from woolworths_extractor import extract_woolworths_raw_products
 
 def search_woolworths(search_term: str):
     products = []
+    next_url = None
 
     def extract_products(page: Page):
+        nonlocal next_url
         page.wait_for_function("""
             () => {
                 const tiles = document.querySelectorAll("wc-product-tile");
@@ -44,16 +46,32 @@ def search_woolworths(search_term: str):
             products.append(product)
 
             
+        next_url = page.locator('a[rel="next"]').get_attribute("href")
+
 
     search_url = (
         "https://www.woolworths.com.au/shop/search/products"
         f"?searchTerm={search_term}"
     )
 
-    DynamicFetcher.fetch(
-        search_url,
-        page_action=extract_products
-    )
+    current_url = search_url
+
+    while current_url:
+        next_url = None
+        print("Fetching:", current_url)
+
+        DynamicFetcher.fetch(
+            current_url,
+            page_action=extract_products
+        )
+        print("Next:", next_url)
+
+        if next_url:
+            current_url = (
+                "https://www.woolworths.com.au" + next_url
+            )
+        else:
+            current_url = None
 
     return products
 
